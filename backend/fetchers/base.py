@@ -26,8 +26,8 @@ class ImageFetcher(ABC):
         self.rate_limiter = rate_limiter
 
     @abstractmethod
-    def fetch_one(self) -> FetchedImage:
+    def fetch_one(self) -> FetchedImage | None:
         """ Fetch a single image and save it to disk
-            Returns image metadata
+            Returns image metadata, or None if the request failed
         """
         ...
