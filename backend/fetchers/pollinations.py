@@ -69,7 +69,7 @@ class PollinationsFetcher(ImageFetcher):
         with open(filepath, "wb") as f:
             f.write(response.content)
 
-        print(f"Saved image successfully: {filepath.name} ({len(response.content) / 1024:.0f} KB)")
+        print(f"Saved image successfully: {filepath.name}, ({len(response.content) / 1024:.0f} KB)")
 
         return FetchedImage(
             filepath=filepath,
