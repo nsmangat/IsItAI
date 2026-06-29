@@ -1,5 +1,6 @@
 import random
 import uuid
+from datetime import date
 from urllib.parse import quote
 
 import requests
@@ -17,10 +18,10 @@ class PollinationsFetcher(ImageFetcher):
 
     BASE_URL = "https://image.pollinations.ai/prompt"
 
-    def __init__(self, rate_limiter: RateLimiter | None = None):
+    def __init__(self, rate_limiter: RateLimiter | None = None, rate_limit: bool = True):
 
         if rate_limiter is None:
-            rate_limiter = RateLimiter(config.POLLINATIONS_MIN_INTERVAL)
+            rate_limiter = RateLimiter(config.POLLINATIONS_MIN_INTERVAL, enabled=rate_limit)
 
         super().__init__(rate_limiter)
         self._used_prompts: list[str] = []
@@ -63,8 +64,8 @@ class PollinationsFetcher(ImageFetcher):
             print(f"Request failed: {e}")
             return None
 
-        filename = f"ai_img_{uuid.uuid4().hex[:10]}.jpg"
-        filepath = config.IMAGE_SAVE_DIR / filename
+        filename = f"ai_img_{date.today().strftime('%Y%m%d')}_{uuid.uuid4().hex[:8]}.jpg"
+        filepath = config.AI_POLLINATIONS_DIR / filename
 
         with open(filepath, "wb") as f:
             f.write(response.content)

@@ -5,8 +5,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).parent
-IMAGE_SAVE_DIR = BASE_DIR / "images"
-IMAGE_SAVE_DIR.mkdir(exist_ok=True)
+IMAGE_DIR = BASE_DIR / "images"
+AI_POLLINATIONS_DIR = IMAGE_DIR / "ai" / "pollinations"
+REAL_UNSPLASH_DIR = IMAGE_DIR / "real" / "unsplash"
+
+AI_POLLINATIONS_DIR.mkdir(parents=True, exist_ok=True)
+REAL_UNSPLASH_DIR.mkdir(parents=True, exist_ok=True)
 
 UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY", "")
 

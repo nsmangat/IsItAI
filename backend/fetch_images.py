@@ -4,10 +4,11 @@ Image fetching pipeline
 Fetches a batch of AI-generated and real images, saving them locally for now
 Test commands for the image fetchers:
 
-    python fetch_images.py --ai 1 --real 1          # 1 of each
-    python fetch_images.py --ai 5 --real 5          # 5 of each
-    python fetch_images.py --ai 3                   # 3 AI only
-    python fetch_images.py --real 2                 # 2 real only
+    python fetch_images.py --ai 1 --real 1               # 1 of each
+    python fetch_images.py --ai 5 --real 5               # 5 of each
+    python fetch_images.py --ai 3                        # 3 AI only
+    python fetch_images.py --real 2                      # 2 real only
+    python fetch_images.py --ai 3 --no-rate-limit        # skip rate limit delays
 """
 
 import argparse
@@ -16,13 +17,16 @@ from fetchers import PollinationsFetcher, UnsplashFetcher
 from fetchers.base import FetchedImage
 
 
-def fetch_images(ai_count: int = 0, real_count: int = 0) -> list[FetchedImage]:
+def fetch_images(ai_count: int = 0, real_count: int = 0, rate_limit: bool = True) -> list[FetchedImage]:
+
+    if not rate_limit:
+        print("WARNING: Rate limiting is disabled!\n")
 
     fetched_images: list[FetchedImage] = []
 
     if ai_count > 0:
 
-        ai_fetcher = PollinationsFetcher()
+        ai_fetcher = PollinationsFetcher(rate_limit=rate_limit)
 
         print(f"Fetching {ai_count} AI-generated image(s)...")
 
@@ -35,7 +39,7 @@ def fetch_images(ai_count: int = 0, real_count: int = 0) -> list[FetchedImage]:
 
     if real_count > 0:
         print("-" * 50)
-        unsplash_fetcher = UnsplashFetcher()
+        unsplash_fetcher = UnsplashFetcher(rate_limit=rate_limit)
 
         print(f"Fetching {real_count} real photo(s)...")
 
@@ -57,9 +61,13 @@ def fetch_images(ai_count: int = 0, real_count: int = 0) -> list[FetchedImage]:
 
 
 if __name__ == "__main__":
+    
     parser = argparse.ArgumentParser(description="Fetch AI and real images, currently from Pollinations.AI and Unsplash")
     parser.add_argument("--ai", type=int, default=0, help="Number of AI images to fetch")
     parser.add_argument("--real", type=int, default=0, help="Number of real images to fetch")
+    parser.add_argument("--no-rate-limit", action="store_true", help="Disable rate limiting (use with caution)")
     args = parser.parse_args()
 
-    fetch_images(ai_count=args.ai, real_count=args.real)
+    # if no-rate-limit arg isn't passed, it'll be False, so have to do not to make it true
+    # else if it is passed, it becomes true as arg, so in param need rate-limit to be false so do not True == False
+    fetch_images(ai_count=args.ai, real_count=args.real, rate_limit=not args.no_rate_limit)

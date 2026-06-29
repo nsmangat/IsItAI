@@ -1,4 +1,6 @@
+import random
 import uuid
+from datetime import date
 
 import requests
 
@@ -22,18 +24,19 @@ class UnsplashFetcher(ImageFetcher):
         "car-accident", "art",
     ]
 
-    def __init__(self, rate_limiter: RateLimiter | None = None):
+    def __init__(self, rate_limiter: RateLimiter | None = None, rate_limit: bool = True):
 
         if rate_limiter is None:
-            rate_limiter = RateLimiter(config.UNSPLASH_MIN_INTERVAL)
+            rate_limiter = RateLimiter(config.UNSPLASH_MIN_INTERVAL, enabled=rate_limit)
 
         super().__init__(rate_limiter)
         self._topic_index = 0
 
-    def _next_topic(self) -> str:
-        topic = self.TOPICS[self._topic_index % len(self.TOPICS)]
-        self._topic_index += 1
-        return topic
+    # # logic to go through all topics, but just doing random for now
+    # def _next_topic(self) -> str:
+    #     topic = self.TOPICS[self._topic_index % len(self.TOPICS)]
+    #     self._topic_index += 1
+    #     return topic
 
     def fetch_one(self) -> FetchedImage | None:
 
@@ -44,7 +47,8 @@ class UnsplashFetcher(ImageFetcher):
                 "and add it to .env"
             )
 
-        topic = self._next_topic()
+        # topic = self._next_topic()
+        topic = random.choice(self.TOPICS)
 
         print(f"[Unsplash] Fetching real photo (topic: {topic})")
         self.rate_limiter.calculate_wait_time_between_requests()
@@ -89,8 +93,8 @@ class UnsplashFetcher(ImageFetcher):
             return None
 
         # Saving actual image 
-        filename = f"real_{uuid.uuid4().hex[:10]}.jpg"
-        filepath = config.IMAGE_SAVE_DIR / filename
+        filename = f"real_img_{date.today().strftime('%Y%m%d')}_{uuid.uuid4().hex[:8]}.jpg"
+        filepath = config.REAL_UNSPLASH_DIR / filename
 
         with open(filepath, "wb") as f:
             f.write(img_response.content)

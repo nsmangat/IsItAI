@@ -6,8 +6,9 @@ to not get rate limited
 """
 class RateLimiter:    
 
-    def __init__(self, min_interval: float):
+    def __init__(self, min_interval: float, enabled: bool = True):
         self.min_interval = min_interval
+        self.enabled = enabled
         self._last_request = 0
 
     """
@@ -15,7 +16,10 @@ class RateLimiter:
     Returns how many seconds we need to wait until the next request 0 if we don't need to wait
     """
     def calculate_wait_time_between_requests(self) -> float:
-        
+
+        if not self.enabled:
+            return 0
+
         current_time = time.time()
         elapsed_time = current_time - self._last_request
 
