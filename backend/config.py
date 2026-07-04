@@ -16,6 +16,10 @@ UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY", "")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_MODEL = "gemini-2.5-flash"
 
+SUPABASE_URL = os.getenv("SUPABASE_URL", "")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
+SUPABASE_IMAGES_BUCKET = "images"
+
 # Minimum seconds between requests per source to stay in free tier
 POLLINATIONS_MIN_INTERVAL = 40   # Pollinations.ai doesn't look like it has strict rate limits
 UNSPLASH_MIN_INTERVAL = 80       # 50 req/hr = 72s between requests, add some leeway just incase
