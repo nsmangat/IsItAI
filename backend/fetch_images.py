@@ -12,9 +12,29 @@ Test commands for the image fetchers:
 """
 
 import argparse
+import json
 
 from fetchers import PollinationsFetcher, UnsplashFetcher
 from fetchers.base import FetchedImage
+
+
+def _image_metadata_path(image: FetchedImage):
+    return image.filepath.with_suffix(".meta.json")
+
+
+# Saving fetched metadata including attributions/credit to disk since upload_images.py runs later as a separate script
+# Maybe TODO: Make fetching images and writing to db all in 1 go, JSON files won't really be needed then, but could be backup
+def _save_image_metadata(image: FetchedImage) -> None:
+
+    data = {
+        "source": image.source,
+        "is_ai": image.is_ai,
+        "source_url": image.source_url,
+        "attribution": image.attribution,
+    }
+
+    with open(_image_metadata_path(image), "w") as f:
+        json.dump(data, f, indent=2)
 
 
 def fetch_images(ai_count: int = 0, real_count: int = 0, rate_limit: bool = True) -> list[FetchedImage]:
@@ -34,6 +54,7 @@ def fetch_images(ai_count: int = 0, real_count: int = 0, rate_limit: bool = True
             print(f"--- AI Image {i + 1}/{ai_count} ---")
             result = ai_fetcher.fetch_one()
             if result:
+                _save_image_metadata(result)
                 fetched_images.append(result)
             print()
 
@@ -47,6 +68,7 @@ def fetch_images(ai_count: int = 0, real_count: int = 0, rate_limit: bool = True
             print(f"--- Real Image {i + 1}/{real_count} ---")
             result = unsplash_fetcher.fetch_one()
             if result:
+                _save_image_metadata(result)
                 fetched_images.append(result)
             print()
 
