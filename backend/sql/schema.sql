@@ -26,3 +26,10 @@ create policy "Public read access" on images
 
 create policy "Public read access" on analyses
     for select using (true);
+
+-- Fix for table permissions error
+-- anon - Supabase Postgres role for anyone with publishable key i.e. testing
+grant select on images, analyses to anon;
+-- service_role - Supabase Postgres role for anyone with secret key i.e. backend to write it needs all permissions
+-- service_role is trusted and bypasses RLS
+grant select, insert, update, delete on images, analyses to service_role; 
