@@ -11,11 +11,20 @@ To run:
 
 import random
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from schemas import QuizAnswerRequest, QuizAnswerResponse, QuizImage
 from supabase_client import get_client
 
 app = FastAPI(title="IsItAI Quiz API")
 client = get_client()
+
+# Adjust CORS settings to be able to communicate with frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
+)
 
 # Serving an image
 # Potential TODO: Change from client-side image tracking to server side using session based methods

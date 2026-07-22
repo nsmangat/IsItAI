@@ -1,5 +1,6 @@
 import { useState } from "react";
 import LandingPage from "./components/LandingPage";
+import QuizView from "./components/QuizView";
 
 function App() {
   const [started, setStarted] = useState(false);
@@ -8,11 +9,7 @@ function App() {
     return <LandingPage onStart={() => setStarted(true)} />;
   }
 
-  return (
-    <div className="flex min-h-screen items-center justify-center text-white">
-      <p>Quiz placeholder</p>
-    </div>
-  );
+  return <QuizView />;
 }
 
 export default App;
