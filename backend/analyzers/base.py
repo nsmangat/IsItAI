@@ -10,7 +10,7 @@ class Signal:
 
     tell: str           # short label, i.e. "warped text"
     explanation: str    # educational description of why this is a common sign of an AI generated image
-    coordinates: dict   # {"x": int, "y": int, "width": int, "height": int} - for highlighting AI tells 
+    coordinates: dict   # {"x": int, "y": int, "width": int, "height": int} - normalized 0-1000, not raw pixels
     severity: str       # "high", "medium", or "low" - How obvious the specific tell is,
                         # not to be confused with confidence which is overall score of the picture
 

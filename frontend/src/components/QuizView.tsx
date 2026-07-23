@@ -5,6 +5,7 @@ import {
   type QuizAnswerResponse,
   type QuizImage,
 } from "../api";
+import AnswerReveal from "./AnswerReveal";
 
 function QuizView() {
   const [image, setImage] = useState<QuizImage | null>(null);
@@ -53,36 +54,33 @@ function QuizView() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-8 px-4">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-8 px-4 py-8">
       <h1 className="text-4xl font-bold text-white">Is It AI?</h1>
 
-      <img
-        src={image.public_url}
-        alt="Guess whether this image is AI-generated or real"
-        className="max-h-[60vh] max-w-full rounded-lg object-contain shadow-lg"
-      />
-
       {answer ? (
-        // TODO: fill with actual info
-        <p className="text-2xl font-semibold text-white">
-          {answer.is_correct_answer ? "Correct!" : "Incorrect!"} This image is{" "}
-          {answer.is_ai ? "AI-generated" : "real"}.
-        </p>
+        <AnswerReveal image={image} answer={answer} />
       ) : (
-        <div className="flex gap-4">
-          <button
-            onClick={() => handleGuess(true)}
-            className="rounded-lg bg-violet-600 px-6 py-3 text-lg font-semibold text-white transition hover:bg-violet-500"
-          >
-            Yes
-          </button>
-          <button
-            onClick={() => handleGuess(false)}
-            className="rounded-lg bg-gray-700 px-6 py-3 text-lg font-semibold text-white transition hover:bg-gray-600"
-          >
-            No
-          </button>
-        </div>
+        <>
+          <img
+            src={image.public_url}
+            alt="Guess whether this image is AI-generated or real"
+            className="max-h-[60vh] max-w-full rounded-lg object-contain shadow-lg"
+          />
+          <div className="flex gap-4">
+            <button
+              onClick={() => handleGuess(true)}
+              className="rounded-lg bg-violet-600 px-6 py-3 text-lg font-semibold text-white transition hover:bg-violet-500"
+            >
+              Yes
+            </button>
+            <button
+              onClick={() => handleGuess(false)}
+              className="rounded-lg bg-gray-700 px-6 py-3 text-lg font-semibold text-white transition hover:bg-gray-600"
+            >
+              No
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

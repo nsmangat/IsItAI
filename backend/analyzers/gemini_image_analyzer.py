@@ -28,10 +28,11 @@ Respond with ONLY minified JSON matching this exact schema, no markdown fences o
   ]
 }
 
-Coordinates are pixel offsets from the top-left of the image, sized for a bounding box around \
-the specific artifact. If you find no clear signals, return an empty signals array. Treat each \
-analysis individually, so don't include findings or similarities of the previous image analysis \
-with the current image being analyzed."""
+Coordinates are normalized to a 0-1000 scale (not raw pixels): x/width are fractions of the \
+image's total width times 1000, y/height are fractions of the image's total height times 1000, \
+regardless of the image's actual pixel dimensions. If you find no clear signals, return an empty \
+signals array. Treat each analysis individually, so don't include findings or similarities of the \
+previous image analysis with the current image being analyzed."""
 
 """Analyzes images for AI-generation tells using Google Gemini Vision"""
 class GeminiAnalyzer(ImageAnalyzer):
