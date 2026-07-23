@@ -3,6 +3,7 @@ import type { QuizAnswerResponse, QuizImage } from "../api";
 interface AnswerRevealProps {
   image: QuizImage;
   answer: QuizAnswerResponse;
+  onNext: () => void;
 }
 
 // Dictionaries to look up severity colors to map severity of signals to appropriate color
@@ -30,7 +31,7 @@ const SEVERITY_LEGEND: { severity: string; label: string }[] = [
   { severity: "low", label: "Low severity" },
 ];
 
-function AnswerReveal({ image, answer }: AnswerRevealProps) {
+function AnswerReveal({ image, answer, onNext }: AnswerRevealProps) {
   return (
     <div className="flex flex-col items-center gap-6 px-4 text-center">
       <p className="text-2xl font-semibold text-white">
@@ -101,6 +102,13 @@ function AnswerReveal({ image, answer }: AnswerRevealProps) {
           </ul>
         </>
       )}
+
+      <button
+        onClick={onNext}
+        className="rounded-lg bg-violet-600 px-6 py-3 text-lg font-semibold text-white transition hover:bg-violet-500"
+      >
+        Next Image
+      </button>
     </div>
   );
 }

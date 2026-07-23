@@ -21,9 +21,20 @@ export interface QuizAnswerResponse {
   signals: Signal[];
 }
 
-// Getting the 'next' image to display for the quiz
-export async function getNextImage(): Promise<QuizImage> {
-  const response = await fetch(`${BACKEND_API_URL}/quiz/next`);
+// Getting the next image to display for the quiz
+// excludeIds are images already seen this session
+// Returns null to signify all images in DB currently being seen
+// Future consideration: This will need to be adjusted when cycling through images daily if hosted online
+export async function getNextImage(
+  excludeIds: string[] = [],
+): Promise<QuizImage | null> {
+  const query = excludeIds.length > 0 ? `?exclude=${excludeIds.join(",")}` : "";
+  const response = await fetch(`${BACKEND_API_URL}/quiz/next${query}`);
+
+  // In current context, means quiz is done
+  if (response.status === 404) {
+    return null;
+  }
 
   if (!response.ok) {
     throw new Error(`Failed to fetch next image: ${response.status}`);

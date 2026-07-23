@@ -11,19 +11,34 @@ function QuizView() {
   const [image, setImage] = useState<QuizImage | null>(null);
   const [answer, setAnswer] = useState<QuizAnswerResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [seenImageIds, setSeenImageIds] = useState<string[]>([]);
+  const [finished, setFinished] = useState(false); // All images seen in the quiz
+
+  // Fetches a new image, excluding ones already seen this session
+  async function loadNextImage() {
+    setError(null);
+    setAnswer(null);
+    setImage(null);
+
+    try {
+      const nextImage = await getNextImage(seenImageIds);
+
+      // Exhausted all images
+      if (!nextImage) {
+        setFinished(true);
+        return;
+      }
+
+      setImage(nextImage);
+      setSeenImageIds((prev) => [...prev, nextImage.image_id]);
+    } catch {
+      setError("Error: Image could not be loaded.");
+    }
+  }
 
   // Get an initial image on quiz load
   useEffect(() => {
-    async function loadImage() {
-      try {
-        const nextImage = await getNextImage();
-        setImage(nextImage);
-      } catch {
-        setError("Error: Image could not be loaded.");
-      }
-    }
-
-    loadImage();
+    loadNextImage();
   }, []);
 
   async function handleGuess(guessIsAi: boolean) {
@@ -45,6 +60,15 @@ function QuizView() {
     );
   }
 
+  if (finished) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-2 text-center text-white">
+        <p className="text-2xl font-semibold">You've seen every image!</p>
+        <p className="text-gray-400">Check back later for more.</p>
+      </div>
+    );
+  }
+
   if (!image) {
     return (
       <div className="flex min-h-screen items-center justify-center text-gray-400">
@@ -58,7 +82,7 @@ function QuizView() {
       <h1 className="text-4xl font-bold text-white">Is It AI?</h1>
 
       {answer ? (
-        <AnswerReveal image={image} answer={answer} />
+        <AnswerReveal image={image} answer={answer} onNext={loadNextImage} />
       ) : (
         <>
           <img
